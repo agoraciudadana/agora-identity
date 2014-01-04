@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 """
 This is an example settings/local.py file.
 These settings overrides what's in settings/base.py
 """
 
 from . import base
-
+from django.utils.translation import ugettext_lazy as _
 
 # To extend any settings from settings/base.py here's an example.
 # If you don't need to extend any settings from base.py, you do not need
@@ -87,3 +88,32 @@ LOGGING = {
 }
 
 INTERNAL_IPS = ('127.0.0.1')
+
+LOGIN_HMAC_SECRET = 'change this'
+
+LOGIN_HMAC_SALT = 'change this too'
+
+AGORA_LINK = 'https://agora.confederacionpirata.org'
+
+AGORA_SECRET = 'shared secret change this too'
+
+SITE_NAME = 'Elige tus eurodiputados #primariasPiratas'
+
+EVENT_TITLE = 'Elige tus eurodiputados #primariasPiratas'
+
+EVENT_TEXT = (
+    'Te hemos enviado un correo con este enlace para facilitarte el acceso al '
+    'sistema de votación. Para poder participar de esta forma, debes primero '
+    'facilitarnos algunos datos identificativos. El voto, será secreto y '
+    'contará con importantes medidas de seguridad.')
+
+TOS_TITLE = (
+    'Acepta la política de privacidad y las condiciones de uso')
+
+TOS_TEXT = (
+    "Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum "
+    "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum "
+    "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum "
+    "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum "
+    "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum "
+    "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum ")

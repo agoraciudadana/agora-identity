@@ -1,0 +1,14 @@
+{% extends "_layouts/base.html" %}
+{% load i18n %}
+
+{% block page_title %}{{ SITE_NAME }}{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1>{% trans "Invalid link" %}</h1>
+            <p>{% blocktrans %}Sorry but the link you used is invalid. Maybe it has expired or it might have already been used. Either way, you can try to <a href="{{ AGORA_LINK }}">authenticate using the other available methods into the voting system</a> or <a href="{{ CONTACT_MAIL }}">contact us</a>.{% endblocktrans %}</p>
+        </div>
+    </div>
+
+{% endblock %}

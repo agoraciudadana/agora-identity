@@ -16,3 +16,4 @@ django-nose
 coverage
 pep8
 pylint
+ipdb

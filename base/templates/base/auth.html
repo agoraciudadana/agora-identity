@@ -1,0 +1,42 @@
+{% extends "_layouts/base.html" %}
+{% load i18n %}
+
+{% block page_title %}{{ SITE_NAME }}{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1>{{ EVENT_TITLE }}</h1>
+            <p>{{ EVENT_TEXT }}</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <form role="form">
+            <div class="form-group">
+                <label for="name">{% trans "Name and SURNAME" %}</label>
+                <input type="text" value="" class="form-control" id="name" placeholder="{% trans "Name and SURNAME" %}">
+            </div>
+            <div class="form-group">
+                <label for="name">{% trans "Nickname" %}</label>
+                <input type="text" value="" class="form-control" id="nickname" placeholder="{% trans "Nickname" %}">
+            </div>
+            <div class="form-group">
+                <label for="password">{% trans "Password" %}</label>
+                <input type="password" class="form-control" id="password" placeholder="{% trans "Password" %}">
+            </div>
+            <div class="form-group">
+                <label for="password2">{% trans "Password again" %}</label>
+                <input type="password" class="form-control" id="password2" placeholder="{% trans "Password again" %}">
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" rows="4" id="tostext">{{ TOS_TEXT }}</textarea>
+                <div class="checkbox">
+                    <input type="checkbox"> {{ TOS_TITLE }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-lg btn-primary btn-block">{% trans "Enter to vote" %}</button>
+        </form>
+    </div>
+
+{% endblock %}
