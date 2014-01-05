@@ -1,0 +1,118 @@
+{% extends "_layouts/base.html" %}
+{% load i18n %}
+
+{% block page_title %}{{ SITE_NAME }} - {% trans "Send login emails" %}{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1>{% trans "Send login emails" %}</h1>
+            <p>{% blocktrans %}This page allows you to send mass custom emails to verified email accounts.  <strong>We save no data in any database</strong>: we just send the emails. {% endblocktrans %}</p>
+
+            <p>{% blocktrans %}In the body of the email you have to insert some keywords that will be automatically replaced:{% endblocktrans %}</p>
+            <ul>
+                <li><strong>##LOGIN_URL##</strong> which will be replaced to a unique url for each email address.</li>
+                <li><strong>##EMAIL##</strong> which will be replaced with the email address of the receiver.</li>
+                <li><strong>##NAME##</strong> which will be replaced with the name of the receiver if provided. It's replaced by the email if name is not provided.</li>
+            </ul>
+        </div>
+    </div>
+
+    {% if form.errors %}
+        <div class="container">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    {% for field, error in form.errors.items %}
+                        <strong>{{ field.title }}: {{ error }}</strong>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="container">
+        <form role="form" id="send-mails-form" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="subject">{% trans "Email subject" %}</label>
+                <small>{% trans "The subject is common for all the receiver" %}</small>
+                <input type="text" value="" class="form-control" name="subject" placeholder="{% trans "The subject is common for all the receiver" %}" id="subject" />
+            </div>
+            <div class="form-group">
+                <label for="plaintext_body">{% trans "Plain text email body" %}</label>
+                <textarea class="form-control" rows="4" name='plaintext_body' id="plaintext_body" placeholder="{% trans "Plain text email body" %}"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="html_body">{% trans "HTML email body (optional)" %}</label>
+                <textarea class="form-control" rows="4" name='html_body' placeholder="{% trans "HTML email body, optional" %}" id="html_body"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="receivers">{% trans "Receivers" %}</label>
+                <small>{% trans "One receiver per line. Format of a line: 'email;name' or just 'email'" %}</small>
+                <textarea class="form-control" rows="4" placeholder="{% trans "One receiver per line. Format of a line: 'email;name' or just 'email'" %}" name='receivers' id="receivers"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="password">{% trans "Password" %}</label>
+                <input type="password" class="form-control" name="password" id="password" placeholder="{% trans "Password" %}" />
+            </div>
+            <button type="submit" class="btn btn-lg btn-primary btn-block">{% trans "Send mass mail" %}</button>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        function validateEmail(elementValue){
+            var emailPattern = /^[a-z0-9!#$%&'*+/=?^_{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+            return emailPattern.test(elementValue);
+        }
+
+        $("#send-mails-form").submit(function () {
+            if ($("#subject").val().length < 5) {
+                alert("Subject is too short");
+                return false;
+            }
+            var receivers = $("#receivers").val().trim();
+
+            if (receivers.length < 3) {
+                alert("No receivers specified");
+                return false;
+            }
+            var lines = receivers.split('\n');
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (receivers.length < 3) {
+                    alert("Line " + i + ": empty or very short line");
+                    return false;
+                }
+                var data = line.split(";");
+                if (data.length > 2) {
+                    alert("Line " + i + ": too many semi-colons");
+                    return false;
+                }
+
+                if(!validateEmail(data[0].strip())) {
+                    alert("Line " + i + ": invalid email: " + data[0]);
+                    return false;
+                }
+            }
+
+            var body = $("#plaintext_body").val();
+            if (body.length < 3) {
+                alert("Plain text body is too short");
+                return false;
+            }
+            if (!body.contains("##LOGIN_URL##")) {
+                alert("Plain text body doesn't contains ##LOGIN_URL##");
+                return false;
+            }
+
+            if ($("#password").val().length < 3) {
+                alert("Password is too short");
+                return false;
+            }
+            return true;
+        });
+    </script>
+{% endblock js %}

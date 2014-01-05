@@ -10,7 +10,15 @@ from django.utils.translation import ugettext_lazy as _
 # To extend any settings from settings/base.py here's an example.
 # If you don't need to extend any settings from base.py, you do not need
 # to import base above
-INSTALLED_APPS = base.INSTALLED_APPS + ('django_nose',)
+INSTALLED_APPS = base.INSTALLED_APPS + (
+    'django_nose',
+    'djcelery_email',
+)
+
+CELERY_EMAIL_TASK_CONFIG = {
+    'queue' : 'email',
+    'rate_limit' : '180/m',
+}
 
 DATABASES = {
     'default': {
@@ -39,7 +47,9 @@ ADMINS = (
 )
 MANAGERS = ADMINS
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
+
+CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CACHES = {
     'default': {
@@ -88,6 +98,10 @@ LOGGING = {
 }
 
 INTERNAL_IPS = ('127.0.0.1')
+
+ALLOW_SEND_MAILS = True
+
+SEND_MAILS_PASSWORD = 'change this password'
 
 LOGIN_HMAC_SECRET = 'change this'
 

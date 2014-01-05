@@ -36,3 +36,6 @@ South
 
 # connect with agora
 requests
+
+# send emails in a reasonable way
+django-celery-email

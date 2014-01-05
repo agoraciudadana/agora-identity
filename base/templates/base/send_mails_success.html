@@ -1,0 +1,14 @@
+{% extends "_layouts/base.html" %}
+{% load i18n %}
+
+{% block page_title %}{{ SITE_NAME }}{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1>{% trans "Mass mailing success!" %}</h1>
+            <p>{% blocktrans %}Success doing the mass mailing :-){% endblocktrans %}</p>
+        </div>
+    </div>
+
+{% endblock %}

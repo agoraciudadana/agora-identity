@@ -23,13 +23,14 @@ import json
 import urllib
 
 from django.views.generic import TemplateView, FormView
+from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.utils.crypto import constant_time_compare, salted_hmac
 
-from forms import RegisterForm
+from forms import RegisterForm, SendMailsForm
 
 def check_hmac(hmac, value):
     '''
@@ -41,12 +42,14 @@ def check_hmac(hmac, value):
     print("hmac_calculated = /auth/%s/%s" % (hmac_calculated.hexdigest(), value))
     return constant_time_compare(hmac, hmac_calculated.hexdigest())
 
+
+
 def generate_hmac(value):
     '''
     Generates the hmac
     '''
     return salted_hmac(key_salt=settings.LOGIN_HMAC_SALT, value=value,
-                       secret=settings.LOGIN_HMAC_SECRET)
+                       secret=settings.LOGIN_HMAC_SECRET).hexdigest()
 
 class AuthView(FormView):
     '''
@@ -129,3 +132,27 @@ class InvalidAuthView(TemplateView):
         context['AGORA_LINK'] = settings.AGORA_URL
         context['CONTACT_MAIL'] = "mailto:" + settings.DEFAULT_FROM_EMAIL
         return context
+
+
+class SendMailsView(FormView):
+    template_name = 'base/send_mails.html'
+    form_class = SendMailsForm
+
+    def get_form_kwargs(self):
+        kwargs = super(SendMailsView, self).get_form_kwargs()
+        kwargs.update({'request': self.request})
+        return kwargs
+
+    def get_success_url(self):
+        '''
+        Redirect to the activation url
+        '''
+        return reverse('send-mails-success')
+
+    def form_valid(self, form):
+        form.send_mails()
+        return super(SendMailsView, self).form_valid(form)
+
+
+class SendMailsSuccessView(TemplateView):
+    template_name = 'base/send_mails_success.html'
