@@ -33,3 +33,6 @@ South
 
 # Feature testing
 #django-waffle
+
+# connect with agora
+requests

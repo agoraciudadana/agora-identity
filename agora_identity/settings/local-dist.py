@@ -97,6 +97,12 @@ AGORA_LINK = 'https://agora.confederacionpirata.org'
 
 AGORA_SECRET = 'shared secret change this too'
 
+AGORA_API_KEY = '<user>:<apikey>'
+
+BASE_USERNAME = 'user'
+
+NUM_RANDOM_USERNAME_CHARS = 5
+
 SITE_NAME = 'Elige tus eurodiputados #primariasPiratas'
 
 EVENT_TITLE = 'Elige tus eurodiputados #primariasPiratas'

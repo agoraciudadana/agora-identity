@@ -11,28 +11,43 @@
         </div>
     </div>
 
+    {% if form.errors %}
+        <div class="container">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    {% for field, error in form.errors.items %}
+                        <strong>{{ field.title }}: {{ error }}</strong>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="container">
-        <form role="form">
+        <form role="form" id="register-form" method="POST">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="name">{% trans "Name and SURNAME" %}</label>
-                <input type="text" value="" class="form-control" id="name" placeholder="{% trans "Name and SURNAME" %}">
-            </div>
-            <div class="form-group">
-                <label for="name">{% trans "Nickname" %}</label>
-                <input type="text" value="" class="form-control" id="nickname" placeholder="{% trans "Nickname" %}">
+                <input type="text" value="" class="form-control" name="name" id="name" placeholder="{% trans "Name and SURNAME" %}" />
             </div>
             <div class="form-group">
                 <label for="password">{% trans "Password" %}</label>
-                <input type="password" class="form-control" id="password" placeholder="{% trans "Password" %}">
+                <input type="password" class="form-control" name="password" id="password" placeholder="{% trans "Password" %}" />
             </div>
             <div class="form-group">
                 <label for="password2">{% trans "Password again" %}</label>
-                <input type="password" class="form-control" id="password2" placeholder="{% trans "Password again" %}">
+                <input type="password" class="form-control" name="password2" id="password2" placeholder="{% trans "Password again" %}" />
+            </div>
+            <div class="form-group">
+                <label for="email">{% trans "Email (cannot be changed)" %}</label>
+                <input type="email" class="form-control" id="email" value="{{ email }}" disabled />
             </div>
             <div class="form-group">
                 <textarea class="form-control" rows="4" id="tostext">{{ TOS_TEXT }}</textarea>
                 <div class="checkbox">
-                    <input type="checkbox"> {{ TOS_TITLE }}
+                    <label>
+                        <input type="checkbox" id="tos_checkbox"/>{{ TOS_TITLE }}
+                    </label>
                 </div>
             </div>
             <button type="submit" class="btn btn-lg btn-primary btn-block">{% trans "Enter to vote" %}</button>
@@ -40,3 +55,27 @@
     </div>
 
 {% endblock %}
+
+{% block js %}
+    <script>
+        $("#register-form").submit(function () {
+            if ($("#name").val().length < 3) {
+                alert("{% trans "Name is too short" %}");
+                return false;
+            }
+            if ($("#password").val().length < 3) {
+                alert("{% trans "Password is too short" %}");
+                return false;
+            }
+            if ($("#password").val() != $("#password2").val()) {
+                alert("{% trans "Passwords do not match" %}");
+                return false;
+            }
+            if (!$("#tos_checkbox").is(':checked')) {
+                alert("{% trans "You need to accept the license and conditions" %}");
+                return false;
+            }
+            return true;
+        });
+    </script>
+{% endblock js %}

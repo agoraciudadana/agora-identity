@@ -18,8 +18,14 @@
 # Views for the base application
 #
 
+import requests
+import json
+import urllib
+
 from django.views.generic import TemplateView, FormView
 from django.conf import settings
+from django.core.validators import validate_email
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.utils.crypto import constant_time_compare, salted_hmac
 
@@ -32,7 +38,15 @@ def check_hmac(hmac, value):
     hmac_calculated = salted_hmac(key_salt=settings.LOGIN_HMAC_SALT,
                                   value=value,
                                   secret=settings.LOGIN_HMAC_SECRET)
+    print("hmac_calculated = /auth/%s/%s" % (hmac_calculated.hexdigest(), value))
     return constant_time_compare(hmac, hmac_calculated.hexdigest())
+
+def generate_hmac(value):
+    '''
+    Generates the hmac
+    '''
+    return salted_hmac(key_salt=settings.LOGIN_HMAC_SALT, value=value,
+                       secret=settings.LOGIN_HMAC_SECRET)
 
 class AuthView(FormView):
     '''
@@ -41,35 +55,70 @@ class AuthView(FormView):
     template_name = 'base/auth.html'
     form_class = RegisterForm
 
+    def get_form_kwargs(self):
+        kwargs = super(AuthView, self).get_form_kwargs()
+        kwargs.update({'request': self.request, 'email': self.email})
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super(AuthView, self).get_context_data(**kwargs)
         context['EVENT_TITLE'] = settings.EVENT_TITLE
         context['EVENT_TEXT'] = settings.EVENT_TEXT
         context['TOS_TITLE'] = settings.TOS_TITLE
         context['TOS_TEXT'] = settings.TOS_TEXT
+        context['email'] = self.email
         return context
 
     def get_success_url(self):
-        # TODO
-        return ''
+        '''
+        Redirect to the activation url
+        '''
+        return settings.AGORA_URL + self.url
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        form.send()
+        self.url = form.register()
         return super(AuthView, self).form_valid(form)
-
 
     def dispatch(self, *args, **kwargs):
         self.kwargs = kwargs
         hmac = self.kwargs["hmac"]
-        email = self.kwargs["email"]
+        self.email = urllib.unquote_plus(self.kwargs["email"])
 
-        # authenticate the link
-        if not check_hmac(hmac, email):
+        # check for an invalid email
+        try:
+            validate_email(self.email)
+        except:
             return redirect('invalid-auth')
 
-        return super(AuthView, self).dispatch(*args, **kwargs)
+        # authenticate the link
+        if not check_hmac(hmac, self.email):
+            return redirect('invalid-auth')
+
+        # try to login with this email/user
+        url = settings.AGORA_URL + "/api/v1/user/email_login/"
+        payload = dict(
+            activation_secret=settings.AGORA_SECRET,
+            email=self.email
+        )
+
+        headers = {
+            'content-type': 'application/json',
+            'Authorization': settings.AGORA_API_KEY
+        }
+
+        r = requests.post(url, data=json.dumps(payload), verify=False,
+                          headers=headers)
+        if r.status_code != 200:
+            print("r.status_code = %d\n" % r.status_code)
+            return super(AuthView, self).dispatch(*args, **kwargs)
+
+        try:
+            url = r.json()['url']
+        except:
+            return super(AuthView, self).dispatch(*args, **kwargs)
+        return HttpResponseRedirect(url)
 
 
 class InvalidAuthView(TemplateView):
@@ -77,6 +126,6 @@ class InvalidAuthView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(InvalidAuthView, self).get_context_data(**kwargs)
-        context['AGORA_LINK'] = settings.AGORA_LINK
+        context['AGORA_LINK'] = settings.AGORA_URL
         context['CONTACT_MAIL'] = "mailto:" + settings.DEFAULT_FROM_EMAIL
         return context
