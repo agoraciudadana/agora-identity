@@ -112,7 +112,7 @@ class AuthView(FormView):
         }
 
         r = requests.post(url, data=json.dumps(payload), verify=False,
-                          headers=headers)
+                          headers=headers, auth=settings.AGORA_BASIC_AUTH)
         if r.status_code != 200:
             print("r.status_code = %d\n" % r.status_code)
             return super(AuthView, self).dispatch(*args, **kwargs)

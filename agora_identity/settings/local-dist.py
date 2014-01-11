@@ -140,3 +140,6 @@ TOS_TEXT = (
 
 # Allows to put agora-identity in a subpath instead of needing a subdomain
 LOCATION_SUBPATH = ""
+
+# allow to use basic auth when connecting to the agora api
+AGORA_BASIC_AUTH = None

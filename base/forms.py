@@ -102,7 +102,7 @@ class RegisterForm(forms.Form):
                 activation_secret=settings.AGORA_SECRET
             )
             r = requests.post(url, data=json.dumps(payload), verify=False,
-                              headers=headers)
+                              headers=headers, auth=settings.AGORA_BASIC_AUTH)
 
             try:
                 j = r.json()
