@@ -137,3 +137,6 @@ TOS_TEXT = (
     "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum "
     "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum "
     "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum ")
+
+# Allows to put agora-identity in a subpath instead of needing a subdomain
+LOCATION_SUBPATH = ""

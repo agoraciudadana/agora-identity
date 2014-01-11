@@ -4,7 +4,7 @@ from django.conf.urls import include, patterns, url
 from django.conf import settings
 
 urlpatterns = patterns('',
-    url(r'', include('base.urls')),
+    url(r'%s' % settings.LOCATION_SUBPATH, include('base.urls')),
 )
 
 if settings.DEBUG:
@@ -12,5 +12,5 @@ if settings.DEBUG:
     admin.autodiscover()
 
     urlpatterns += patterns('',
-        url(r'^admin/', include(admin.site.urls)),
+        url(r'^%sadmin/' % settings.LOCATION_SUBPATH, include(admin.site.urls)),
     )
