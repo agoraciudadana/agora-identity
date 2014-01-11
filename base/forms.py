@@ -189,7 +189,8 @@ class SendMailsForm(forms.Form):
                 name = data[1].strip()
 
             quoted_email = urllib.unquote_plus(email)
-            iri = '/auth/%s/%s' % (generate_hmac(email), quoted_email)
+            iri = '%s/auth/%s/%s' % (settings.LOCATION_SUBPATH,
+                                     generate_hmac(email), quoted_email)
             login_url = self.request.build_absolute_uri(iri)
 
             body = self.cleaned_data['plaintext_body']
