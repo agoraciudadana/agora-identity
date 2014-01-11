@@ -87,7 +87,7 @@ class AuthView(FormView):
     def dispatch(self, *args, **kwargs):
         self.kwargs = kwargs
         hmac = self.kwargs["hmac"]
-        self.email = urllib.unquote_plus(self.kwargs["email"])
+        self.email = self.kwargs["email"]
 
         # check for an invalid email
         try:
