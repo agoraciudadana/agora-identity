@@ -1,20 +1,16 @@
 """ Default urlconf for agora_identity """
 
 from django.conf.urls import include, patterns, url
-from django.contrib import admin
-admin.autodiscover()
-
-
-def bad(request):
-    """ Simulates a server error """
-    1 / 0
+from django.conf import settings
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'agora_identity.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^bad/$', bad),
     url(r'', include('base.urls')),
 )
 
+if settings.DEBUG:
+    from django.contrib import admin
+    admin.autodiscover()
+
+    urlpatterns += patterns('',
+        url(r'^admin/', include(admin.site.urls)),
+    )
