@@ -11,6 +11,5 @@ urlpatterns = patterns('base.views',
 if settings.ALLOW_SEND_MAILS:
     urlpatterns += patterns('base.views',
         url(r'^sendmails/?$', SendMailsView.as_view(), name='send-mails'),
-        url(r'^captcha/', include('captcha.urls')),
         url(r'^sendmails/success/?$', SendMailsSuccessView.as_view(), name='send-mails-success'),
     )
