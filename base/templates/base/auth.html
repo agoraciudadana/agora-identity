@@ -63,6 +63,15 @@
                 alert("{% trans "Name is too short" %}");
                 return false;
             }
+            if ($("#name").val().length >= 30) {
+                alert("{% trans "Name is too long" %}");
+                return false;
+            }
+            if ($("#name").val().match(/[^A-Za-záéíóúÁÉÍÓÚÀÈÌÒÙàèìòù 0-9]/g)) {
+                alert("{% trans "Name contains invalid characters" %}");
+                return false;
+            }
+
             if ($("#password").val().length < 3) {
                 alert("{% trans "Password is too short" %}");
                 return false;
