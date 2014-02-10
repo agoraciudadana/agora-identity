@@ -183,7 +183,7 @@ class SendMailsForm(forms.Form):
 
         for line in lines:
             data = line.split(';')
-            email = data[0]
+            email = data[0].strip()
             name = email
             if len(data) > 1:
                 name = data[1].strip()
