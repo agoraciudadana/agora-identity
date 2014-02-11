@@ -67,7 +67,7 @@
                 alert("{% trans "Name is too long" %}");
                 return false;
             }
-            if ($("#name").val().match(/[^A-Za-záéíóúÁÉÍÓÚÀÈÌÒÙàèìòù 0-9]/g)) {
+            if ($("#name").val().match(/[^A-Za-záéíóúñÑäëïöüÄËÏÖÜÁÉÍÓÚÀÈÌÒÙàèìòù 0-9]/g)) {
                 alert("{% trans "Name contains invalid characters" %}");
                 return false;
             }
