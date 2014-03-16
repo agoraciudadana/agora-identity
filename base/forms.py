@@ -146,6 +146,8 @@ class SendMailsForm(forms.Form):
         return self.cleaned_data['password']
 
     def clean_plaintext_body(self):
+        if self.cleaned_data['plaintext_body'].count('@') > 2:
+            raise forms.ValidationError(_('Too many @ in the text, be careful!'))
         if '##LOGIN_URL##' not in self.cleaned_data['plaintext_body']:
             raise forms.ValidationError(_('No ##LOGIN_URL## inside plaintext '
                                           'body'))
